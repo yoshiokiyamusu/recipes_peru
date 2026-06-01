@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Recipe Assistant</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 600px;
+                margin: 50px auto;
+                padding: 20px;
+                background-color: #f5f5f5;
+            }
+            h1 {
+                color: #333;
+            }
+            .input-form {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            input[type="text"] {
+                flex: 1;
+                padding: 12px;
+                font-size: 16px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            button {
+                padding: 12px 24px;
+                font-size: 16px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            /* New cleaner styling for the recipe cards */
+            .recipe_block {
+                background: white;
+                padding: 15px;
+                margin-bottom: 15px;
+                border-radius: 5px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            .recipe_block h3 {
+                margin-top: 0;
+                color: #007bff;
+            }
+            .prep-time {
+                font-size: 0.9em;
+                color: #6c757d;
+                font-style: italic;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>🍜 Recipe Assistant 🍜</h1>
+        
+        <form method="POST" action="/send_ingredient" class="input-form" id="chatForm">
+            <input type="text" name="message" placeholder="Give me your favorite two ingredients to cook!..." required autocomplete="off">
+            <button type="submit">Send</button>
+        </form>
+
+        {% if messages %}
+            {% for msg in messages %}
+                <h2>Results for: {{ msg.agent_response.ingredients | join(', ') }}</h2>
+                
+                {% for recipe in msg.agent_response.recipes %}
+                    <div class="recipe_block">
+                        <h3>{{ recipe.name }}</h3>
+                        <p class="prep-time">⏱️ Prep Time: {{ recipe.prep_time }}</p>
+                        <p>{{ recipe.description }}</p>
+                    </div>
+                {% endfor %} 
+                
+                <hr>
+            {% endfor %}    
+        {% else %}
+            <p style="color: #999; text-align: center;">What ingredients do you have?</p>
+        {% endif %}
+
+    <a href="/clear">
+        <button type="button" class="clear-btn">Clear Session</button>
+    </a>
+
+    <div class="recipes-container">
+        <h2>Generated Recipes</h2>
+        
+        {% if tb_recipes %}
+            <div class="recipe-list">
+                {% for recipe in tb_recipes %}
+                    <div class="recipe-card" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                        <h3>{{ recipe.name }}</h3>
+                        <p><strong>Prep Time:</strong> {{ recipe.prep_time }}</p>
+                        <p>{{ recipe.description }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No recipes generated yet. Enter some ingredients to get started!</p>
+        {% endif %}
+    </div>
+    </body>
+</html>

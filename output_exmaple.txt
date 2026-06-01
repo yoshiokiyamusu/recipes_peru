@@ -1,0 +1,121 @@
+# Note that this file is not needed to make the recipe_generator.py run ###
+
+{
+    'ingredients': ['broccoli', 'butter', 'eggs'], 
+    'recipes': [
+        {'name': 'Broccoli and Egg Scramble', 'description': 'A quick and easy scramble featuring tender broccoli florets sautéed in butter, mixed with fluffy scrambled eggs.', 'prep_time': '15 minutes'}, 
+        {'name': 'Buttered Broccoli and Poached Eggs', 'description': 'Steamed or blanched broccoli tossed in melted butter, topped with perfectly poached eggs.', 'prep_time': '20 minutes'}, 
+        {'name': 'Broccoli and Egg Fritters', 'description': 'Savory fritters made with finely chopped broccoli, whisked eggs, and a hint of butter, pan-fried until golden.', 'prep_time': '25 minutes'}
+    ],
+    'complexity':[
+        {'name': 'Broccoli and Egg Scramble','level':3 of 10},
+        {'name': 'Buttered Broccoli and Poached Eggs','level':4 of 10},
+        {'name': 'Broccoli and Egg Fritters','level':5 of 10},
+    ]
+}
+
+...
+
+
+{
+    'ingredients': ['broccoli', 'butter', 'eggs'], 
+    'recipes': [
+        {'name': 'Broccoli and Cheese Frittata', 'description': 'A savory egg dish baked with tender broccoli florets and a hint of butter.', 'prep_time': '15 minutes'}, 
+        {'name': 'Scrambled Eggs with Sautéed Broccoli', 'description': 'Classic scrambled eggs elevated with pan-fried broccoli florets for added flavor and texture.', 'prep_time': '10 minutes'}, 
+        {'name': 'Broccoli and Egg Stir-fry', 'description': 'A quick and healthy stir-fry featuring scrambled eggs and crisp-tender broccoli, lightly seasoned.', 'prep_time': '12 minutes'}
+    ], 
+    'complexity': [
+        {'name': 'Broccoli and Cheese Frittata', 'level': '4 of 10'}, 
+        {'name': 'Scrambled Eggs with Sautéed Broccoli', 'level': '2 of 10'}, 
+        {'name': 'Broccoli and Egg Stir-fry', 'level': '3 of 10'}
+    ]
+}
+
+
+...
+
+{
+  "user": "beef, onions",
+  "agent_response": {
+    "ingredients": [
+      "beef",
+      "onions"
+    ],
+    "recipes": [
+      {
+        "name": "Lomo Saltado",
+        "description": "A classic Peruvian stir-fry combining marinated beef strips with red onions, tomatoes, and often served with French fries and rice.",
+        "prep_time": "30-40 minutes"
+      },
+      {
+        "name": "Seco de Res",
+        "description": "A flavorful Peruvian beef stew braised in a cilantro-based sauce with aji amarillo, peas, carrots, and often served with rice and canario beans.",
+        "prep_time": "1 hour 30 minutes - 2 hours"
+      },
+      {
+        "name": "Carapulcra",
+        "description": "A traditional Peruvian stew made from dehydrated potatoes (papa seca), often cooked with pork or beef, peanuts, aji panca, and a rich blend of spices.",
+        "prep_time": "2 hours"
+      }
+    ],
+    "complexity": [
+      {
+        "name": "Lomo Saltado",
+        "level": "5 of 10"
+      },
+      {
+        "name": "Seco de Res",
+        "level": "6 of 10"
+      },
+      {
+        "name": "Carapulcra",
+        "level": "7 of 10"
+      }
+    ]
+  }
+}
+
+
+...
+
+
+RECIPES_LIST CONTENT: 
+[
+  {
+    'name': 'Lomo Saltado', 
+    'description': 'A traditional Peruvian stir-fry combining marinated strips of sirloin, red onions, tomatoes, and French fries, typically served with rice.', 
+    'prep_time': '30 minutes'
+  }, 
+  {
+    'name': 'Seco de Res', 
+    'description': 'A savory Peruvian beef stew cooked in a cilantro and beer (or chicha de jora) sauce with peas, carrots, and potatoes, often including tomatoes.', 
+    'prep_time': '1 hour 30 minutes'
+  }, 
+  {
+    'name': 'Salsa Criolla', 
+    'description': "A simple and refreshing Peruvian onion salad, typically made with red onions, aji amarillo, lime juice, and often includes diced tomatoes and cilantro. It's a common accompaniment to many Peruvian dishes.", 
+    'prep_time': '15 minutes'
+  }
+]
+
+
+...
+
+
+(
+  {
+    'name': 'Lomo Saltado', 
+    'description': 'A traditional Peruvian stir-fry combining marinated strips of sirloin, red onions, tomatoes, and French fries, typically served with rice.', 
+    'prep_time': '30 minutes'
+  }, 
+  {
+    'name': 'Seco de Res', 
+    'description': 'A savory Peruvian beef stew cooked in a cilantro and beer (or chicha de jora) sauce with peas, carrots, and potatoes, often including tomatoes.', 
+    'prep_time': '1 hour 30 minutes'
+  }, 
+  {
+    'name': 'Salsa Criolla', 
+    'description': "A simple and refreshing Peruvian onion salad, typically made with red onions, aji amarillo, lime juice, and often includes diced tomatoes and cilantro. It's a common accompaniment to many Peruvian dishes.", 
+    'prep_time': '15 minutes'
+  }
+)
