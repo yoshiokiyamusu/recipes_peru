@@ -15,8 +15,8 @@ __pycache__/
 .idea/
 
 #ignore my notes
-.txt
-.sql
+*.txt
+*.sql
 #ignore my random python files that I used in other projects
 
 recipe_generator.py
