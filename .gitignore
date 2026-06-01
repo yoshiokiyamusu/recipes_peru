@@ -15,7 +15,8 @@ __pycache__/
 .idea/
 
 #ignore my notes
-*.txt
+notes.txt
+output_exmaple.txt
 *.sql
 #ignore my random python files that I used in other projects
 
