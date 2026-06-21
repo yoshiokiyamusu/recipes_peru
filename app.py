@@ -5,6 +5,7 @@ from pathlib import Path
 import random
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from recipe_agent import get_recipes
+from agents.phrasal_verb_agent import get_ia_wrong_options, get_ia_sentence_feedback
 import uuid
 from flask_mysqldb import MySQL
 
@@ -30,6 +31,122 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 # MySQL Connection initialized here
 mysql = MySQL(app)
+
+
+
+@app.route('/practice')
+def home_practice():
+    session['thread_id'] = str(uuid.uuid4())  # Generate a unique thread ID for each session
+    try:
+        cursor = mysql.connection.cursor()
+        
+        # 1. Fetch the single random target phrasal verb
+        cursor.execute("SELECT id_word, name, description FROM tt_phrasal_verb ORDER BY RAND() LIMIT 1")
+        row_phrasal_verb = cursor.fetchall()    
+        #print(f"Target verb: {row_phrasal_verb}")  
+        
+        tb_options = []
+        if row_phrasal_verb:
+            # Extract the correct ID and definition from your tuple structure
+            correct_id = row_phrasal_verb[0]['id_word']
+            correct_description = row_phrasal_verb[0]['description']
+            #print(f"Correct ID: {correct_id}, Correct Description: {correct_description}")
+
+            # 2. Fetch 2 RANDOM descriptions from rows that are NOT the correct one
+            cursor.execute("""
+                SELECT id_word, description 
+                FROM tt_phrasal_verb 
+                WHERE id_word != %s 
+                ORDER BY RAND() 
+                LIMIT 2
+            """, (correct_id,))
+            
+            wrong_options = cursor.fetchall()
+
+            #2.1 Bring wrong options from the IA agent as well, to make it more challenging for the user
+            get_ia_wrong_options_response = get_ia_wrong_options(row_phrasal_verb[0]['name'])
+            options_ia_list = get_ia_wrong_options_response.get('meaning', [])
+            #print(f"Options from IA agent: {options_ia_list}")
+
+            # 3. Combine the correct description and the wrong ones into a single list
+            # using a dictionary cursor (DictCursor) allows us to access columns by name, which is more robust than relying on index positions
+            tb_options = [correct_description] + [row['description'] for row in wrong_options]
+
+            #3.1 Add the IA agent options to the list as well
+            for option in options_ia_list:
+                tb_options.append(option.get('wrong_meaning', ''))
+            
+            # 4. Shuffle the list so the correct answer isn't always the first choice!
+            random.shuffle(tb_options)
+            #print(f"Shuffled options: {tb_options}")
+            
+    except Exception as db_err:
+        print(f"Database error encountered while fetching data: {db_err}")
+        row_phrasal_verb = []
+        tb_options = []
+        
+    return render_template('practice.html', tb_phrasal_verb=row_phrasal_verb, tb_options=tb_options)
+
+
+
+
+
+@app.route('/submit_answer', methods=['POST'])
+def send_option():
+    # 1. Fetch the user's ingredients from the form
+    user_choice = request.form['user_choice']
+    phrasal_verb_id = request.form['phrasal_verb_id']
+    phrasal_verb_name = request.form['phrasal_verb_name']
+    user_sentence = request.form['user_sentence']
+    #print(f"Form submitted option: {phrasal_verb_id}")
+    #print(f"Form submitted option: {user_choice}")
+    
+    # 2. Guard clause: handling empty inputs
+    if not user_choice.strip():
+        return redirect(url_for('home_practice'))
+    
+    # 2.1 Send parameters to the IA agent to check your sentence and give you feedback
+    get_ia_sentence_feedback_response = get_ia_sentence_feedback(phrasal_verb_name, user_choice, user_sentence)
+    grammar_check = get_ia_sentence_feedback_response.get('grammar_check', [])
+    grammar_feedback = get_ia_sentence_feedback_response.get('grammar_feedback', [])
+    local_naturalness = get_ia_sentence_feedback_response.get('local_naturalness', [])
+
+    # 3. Check if the user's choice is correct by comparing it to the correct description in the database
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT description FROM tt_phrasal_verb WHERE id_word = %s", (phrasal_verb_id,))
+        correct_description = cursor.fetchone()
+        
+        if correct_description and user_choice == correct_description['description']:
+            print("User's choice is correct!")
+            return jsonify(
+                {
+                 'status': 'success', 
+                 'correct': True, 
+                 'message_j': 'Correct answer, You got the meaning!',
+                 'grammar_check': grammar_check,
+                 'grammar_feedback': grammar_feedback,
+                 'local_naturalness': local_naturalness
+                }
+            )
+        else:
+            print("User's choice is incorrect.")
+            return jsonify({
+                'status': 'success', 
+                'correct': False, 
+                'message_j': 'Incorrect answer. You did not get the meaning.',
+                'grammar_check': grammar_check,
+                'grammar_feedback': grammar_feedback,
+                'local_naturalness': local_naturalness
+            })
+    except Exception as db_err:
+        print(f"Database error encountered while checking answer: {db_err}")
+        return jsonify({'status': 'error', 'message_j': 'Database error occurred'}), 500
+    
+
+
+
+
 
 @app.route('/')
 def home():
