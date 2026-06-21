@@ -1,118 +1,222 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>English Assistant</title>
         <style>
+            /* Global reset to keep boxes from breaking layouts */
+            * {
+                box-sizing: border-box;
+            }
+
             body {
-                font-family: Arial, sans-serif;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
                 max-width: 600px;
-                margin: 50px auto;
-                padding: 20px;
-                background-color: #f5f5f5;
+                margin: 20px auto; /* Reduced top/bottom spacing for mobile accessibility */
+                padding: 15px;
+                background-color: #f8fafc;
+                color: #334155;
             }
+
             h1 {
-                color: #333;
+                color: #1e293b;
+                text-align: center;
+                font-size: 1.8rem;
+                margin-bottom: 25px;
             }
+
+            h2 {
+                color: #334155;
+                font-size: 1.4rem;
+                margin-top: 0;
+            }
+
+            /* Container Panels */
+            .recipes-container {
+                background-color: #ffffff;
+                border: 1px solid #e2e8f0;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            }
+
+            .recipe-card {
+                background-color: #ffffff;
+                border: 1px solid #e2e8f0; 
+                padding: 20px; 
+                margin-bottom: 20px; 
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            }
+
+            .recipe-card h3 {
+                margin: 0;
+                color: #2563eb;
+                font-size: 1.6rem;
+            }
+
+            /* Mobile-optimized interactive Row Taps */
+            .option-row {
+                display: flex;
+                align-items: center;
+                background-color: #ffffff;
+                border: 1px solid #e2e8f0;
+                padding: 14px;
+                margin-bottom: 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .option-row:hover, .option-row:active {
+                background-color: #f1f5f9;
+                border-color: #cbd5e1;
+            }
+
+            .option-row input[type="radio"] {
+                margin-right: 14px;
+                transform: scale(1.3); /* Made larger for easy tapping on thumb tracks */
+                cursor: pointer;
+            }
+
             .option-row label {
                 cursor: pointer;
                 font-size: 1rem;
-                color: #444;
+                color: #475569;
                 width: 100%;
+                line-height: 1.4;
             }
+
+            /* Buttons built for finger taps */
             .submit-btn {
-                background-color: #2ecc71;
+                background-color: #10b981;
                 color: white;
                 border: none;
-                padding: 10px 20px;
-                font-size: 1rem;
-                border-radius: 5px;
+                padding: 14px 20px; /* Taller padding makes it easier to press on phones */
+                font-size: 1.1rem;
+                font-weight: bold;
+                border-radius: 8px;
                 cursor: pointer;
                 width: 100%;
-                margin-top: 10px;
+                margin-top: 15px;
+                box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+                transition: background-color 0.2s;
             }
+
             .submit-btn:hover {
-                background-color: #27ae60;
+                background-color: #059669;
             }
-            /* Base styles for the feedback box */
+            
+            /* Dynamic Response Boxes */
             #feedback-message {
-                padding: 5px 5px;
-                margin-bottom: 5px;
-                border-radius: 6px;
+                padding: 12px;
+                margin-bottom: 15px;
+                border-radius: 8px;
                 text-align: center;
                 font-weight: bold;
-                font-size: 1.05rem;
-                transition: all 0.3s ease; /* Smoothly transitions when appearing */
+                font-size: 1rem;
+                display: none;
             }
 
-            /* Green styling when the user gets it right */
             .feedback-correct {
-                background-color: #d4edda;
-                color: #155724;
-                border: 1px solid #c3e6cb;
+                background-color: #d1fae5;
+                color: #065f46;
+                border: 1px solid #a7f3d0;
             }
 
-            /* Red styling when the user gets it wrong */
             .feedback-incorrect {
-                background-color: #f8d7da;
-                color: #721c24;
-                border: 1px solid #f5c6cb;
+                background-color: #fee2e2;
+                color: #991b1b;
+                border: 1px solid #fecaca;
             }
+
+            #sentence-feedback {
+                background-color: #f8fafc;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 15px;
+                margin: 15px 0;
+                display: none;
+            }
+
+            #sentence-feedback p {
+                margin: 8px 0;
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+
+            /* Sentence Practice Text Box Layouts */
             .sentence-practice-container {
                 margin-top: 25px;
-                padding-top: 15px;
-                border-top: 2px dashed #eee; /* Visually separates the quiz from the writing practice */
+                padding-top: 20px;
+                border-top: 2px dashed #e2e8f0;
             }
 
             .sentence-label {
                 display: block;
                 font-weight: bold;
-                margin-bottom: 8px;
-                color: #2c3e50;
-                font-size: 0.95rem;
+                margin-bottom: 10px;
+                color: #334155;
+                font-size: 1rem;
             }
 
             .sentence-practice-container textarea {
                 width: 100%;
                 padding: 12px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
                 font-size: 1rem;
                 font-family: inherit;
-                box-sizing: border-box; /* Ensures padding doesn't break layout width */
-                resize: vertical; /* Allows user to drag larger vertically, but keeps width locked */
+                resize: vertical;
                 transition: border-color 0.2s;
             }
 
             .sentence-practice-container textarea:focus {
-                border-color: #3498db;
+                border-color: #3b82f6;
                 outline: none;
-                box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            }
+
+            /* 2. RESPONSIVE MEDIA QUERIES: Controls details based on screen size */
+            @media (max-width: 480px) {
+                body {
+                    margin: 10px auto;
+                    padding: 10px;
+                }
+                h1 {
+                    font-size: 1.5rem;
+                }
+                .recipes-container {
+                    padding: 15px;
+                }
+                .option-row {
+                    padding: 12px;
+                }
             }
         </style>
     </head>
     <body>
         <h1>📖 English Assistant 📖</h1>
         
-       {% if tb_phrasal_verb %}
+        {% if tb_phrasal_verb %}
             <div class="phrasal-list">
                 {% for phrasal in tb_phrasal_verb %}
-                    <div class="recipe-card" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                    <div class="recipe-card">
                         <h3>{{ phrasal.name }}</h3>  
                     </div>
                 {% endfor %}
             </div>
         {% else %}
-            <p>No Data</p>
+            <p style="text-align: center;">No Data</p>
         {% endif %}
 
-   
-
-    <div class="recipes-container">
-        <h2>Options</h2>
-        <!-- Target placeholder container for displaying JavaScript responses -->
-        <div id="feedback-message"></div>
-        <form id="quiz-form" method="POST" action="/submit_answer">
-                <!-- HIDDEN INPUT: Sends the corresponding id_word to your Python script -->
+        <div class="recipes-container">
+            <h2>Options</h2>
+            <div id="feedback-message"></div>
+            
+            <form id="quiz-form" method="POST" action="/submit_answer">
                 {% if tb_phrasal_verb %}
                     <input type="hidden" name="phrasal_verb_id" value="{{ tb_phrasal_verb[0]['id_word'] }}">
                     <input type="hidden" name="phrasal_verb_name" value="{{ tb_phrasal_verb[0]['name'] }}">
@@ -120,15 +224,11 @@
 
                 {% for option in tb_options %}
                     <div class="option-row">
-                        <!-- loop.index generates a unique ID for each radio element (1, 2, 3) -->
                         <input type="radio" id="option_{{ loop.index }}" name="user_choice" value="{{ option }}" required>
-                        <!--<input type="hidden" name="phrasal_verb_id" value="{{ tb_phrasal_verb[0]['id_word'] }}"> -->
                         <label for="option_{{ loop.index }}">{{ option }}</label>
                     </div>
                 {% endfor %}
                 
-                
-                <!-- Practice: phrasal verb to practice -->
                 <div class="sentence-practice-container">
                     <label for="user_sentence" class="sentence-label">
                         ✍️ Practice: Write your own sentence using this phrasal verb:
@@ -140,29 +240,27 @@
                         placeholder="Type your sentence here..." 
                         required></textarea>
                 </div>
+                
                 <div id="sentence-feedback"></div>
+                
                 {% if tb_options %}
                     <button type="submit" class="submit-btn">Submit Answer</button>
                 {% else %}
-                    <p style="color: #7f8c8d; font-style: italic;">No option definitions available.</p>
+                    <p style="color: #7f8c8d; font-style: italic; text-align: center;">No option definitions available.</p>
                 {% endif %}
-        </form>
-    </div>
+            </form>
+        </div>
 
-
-    <!-- AJAX Handling JavaScript Script -->
         <script>
             document.getElementById('quiz-form').addEventListener('submit', function(event) {
-                // Prevent the browser from refreshing the page on form submission
                 event.preventDefault(); 
                 
                 const form = event.target;
                 const formData = new FormData(form);
                 const feedbackDiv = document.getElementById('feedback-message');
                 const sentenceFeedbackDiv = document.getElementById('sentence-feedback');
-                console.log("AJAX here")
+                console.log("AJAX here");
                 
-                // This fetch triggers the Post method in app.py, which checks the answer and returns a JSON response
                 fetch(form.action, {
                     method: 'POST',
                     body: formData
@@ -171,10 +269,8 @@
                 .then(data => {
                     feedbackDiv.style.display = 'block';
                     feedbackDiv.innerText = data.message_j;
-                    // 2. Handle sentence practice feedback (COMBINE ALL VALUES HERE)
-                    sentenceFeedbackDiv.style.display = 'block';
                     
-                    // Create a pass/fail emoji status
+                    sentenceFeedbackDiv.style.display = 'block';
                     const grammarStatus = data.grammar_check ? "✅ Correct Grammar" : "❌ Grammar Fix Needed";
 
                     sentenceFeedbackDiv.innerHTML = `
@@ -183,8 +279,6 @@
                         <p><strong>Natural Phrase:</strong> <em>"${data.local_naturalness}"</em></p>
                     `;
 
-                    
-                    // Style the feedback box depending on whether the answer was correct
                     if (data.status === 'success' && data.correct) {
                         feedbackDiv.className = 'feedback-correct';
                     } else {
